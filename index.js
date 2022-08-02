@@ -19,6 +19,7 @@ app.use(bodyParser.json());
 
 const HTTP_OK_STATUS = 200;
 const PORT = '3000';
+const FILE = './talker.json';
 
 // não remova esse endpoint, e para o avaliador funcionar
 app.get('/', (_request, response) => {
@@ -26,7 +27,7 @@ app.get('/', (_request, response) => {
 });
 
 app.get('/talker', async (req, res) => {
-  const data = await fs.readFile('./talker.json');
+  const data = await fs.readFile(FILE);
   const talkers = await JSON.parse(data);
   if (talkers.length < 1) return res.status(200).json([]);
   return res.status(200).json(talkers);
@@ -35,7 +36,7 @@ app.get('/talker', async (req, res) => {
 app.get('/talker/search', validateToken, async (req, res) => {
   const { q } = req.query;
     
-  const data = await fs.readFile('./talker.json');
+  const data = await fs.readFile(FILE);
   const talkers = await JSON.parse(data);
   
   if (!q) {
@@ -48,7 +49,7 @@ app.get('/talker/search', validateToken, async (req, res) => {
 app.get('/talker/:id', async (req, res) => {
   const { id } = req.params;
 
-  const data = await fs.readFile('./talker.json');
+  const data = await fs.readFile(FILE);
   const talkers = await JSON.parse(data);
   const talker = talkers.find((t) => t.id === +id);
 
@@ -68,11 +69,11 @@ app.use(validateToken);
 app.delete('/talker/:id', async (req, res) => {
   const { id } = req.params;
 
-  const data = await fs.readFile('./talker.json');
+  const data = await fs.readFile(FILE);
   const talkers = await JSON.parse(data);
   const updateTalkers = talkers.filter((t) => Number(t.id) !== Number(id));
 
-  fs.writeFile('./talker.json', JSON.stringify(updateTalkers, null, '\t'));
+  fs.writeFile(FILE, JSON.stringify(updateTalkers, null, '\t'));
   
   return res.status(204).end();
 });
@@ -86,11 +87,11 @@ app.use(validateRate);
 app.post('/talker', async (req, res) => {
   const { name, age, talk } = req.body;
   
-  const data = await fs.readFile('./talker.json');
+  const data = await fs.readFile(FILE);
   const talkers = await JSON.parse(data);
   const talker = { id: talkers.length + 1, name, age, talk };
   talkers.push(talker);
-  fs.writeFile('./talker.json', JSON.stringify(talkers, null, '\t'));
+  fs.writeFile(FILE, JSON.stringify(talkers, null, '\t'));
   return res.status(201).json(talker);
 });
 
@@ -98,7 +99,7 @@ app.put('/talker/:id', async (req, res) => {
   const { id } = req.params;
   const { name, age, talk } = req.body;
 
-  const data = await fs.readFile('./talker.json');
+  const data = await fs.readFile(FILE);
   const talkers = await JSON.parse(data);
   let talker = {};
   const newTalkers = talkers.map((t) => {
@@ -109,7 +110,7 @@ app.put('/talker/:id', async (req, res) => {
     return t;
   });
 
-  fs.writeFile('./talker.json', JSON.stringify(newTalkers, null, '\t'));
+  fs.writeFile(FILE, JSON.stringify(newTalkers, null, '\t'));
   return res.status(200).json(talker);
 });
 
