@@ -22,6 +22,13 @@ app.get('/', (_request, response) => {
   response.status(HTTP_OK_STATUS).send();
 });
 
+app.get('/talker', async (req, res) => {
+  const data = await fs.readFile('./talker.json');
+  const talkers = await JSON.parse(data);
+  if (talkers.length < 1) return res.status(200).json([]);
+  return res.status(200).json(talkers);
+});
+
 app.listen(PORT, () => {
   console.log('Online');
 });
