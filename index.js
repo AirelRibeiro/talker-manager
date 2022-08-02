@@ -52,6 +52,18 @@ app.post('/login', validateEmail, validatePassword, (req, res) => {
 
 app.use(validateToken);
 
+app.delete('/talker/:id', async (req, res) => {
+  const { id } = req.params;
+
+  const data = await fs.readFile('./talker.json');
+  const talkers = await JSON.parse(data);
+  const updateTalkers = talkers.filter((t) => Number(t.id) !== Number(id));
+
+  fs.writeFile('./talker.json', JSON.stringify(updateTalkers, null, '\t'));
+  
+  return res.status(204).end();
+});
+
 app.use(validateName);
 app.use(validateAge);
 app.use(validateTalk);
