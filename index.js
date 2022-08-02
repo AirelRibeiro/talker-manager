@@ -41,6 +41,14 @@ app.get('/talker/:id', async (req, res) => {
   return res.status(200).json(talker);
 });
 
+app.post('/login', validatePersonalInfors, (req, res) => {
+  const token = crypto.randomBytes(8).toString('hex');
+  req.token = token;
+  res.status(200).json({ token });
+});
+
+app.use(errorMiddleware);
+
 app.listen(PORT, () => {
   console.log('Online');
 });
