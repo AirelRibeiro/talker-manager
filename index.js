@@ -69,6 +69,25 @@ app.post('/talker', async (req, res) => {
   return res.status(201).json(talker);
 });
 
+app.put('/talker/:id', async (req, res) => {
+  const { id } = req.params;
+  const { name, age, talk } = req.body;
+
+  const data = await fs.readFile('./talker.json');
+  const talkers = await JSON.parse(data);
+  let talker = {};
+  const newTalkers = talkers.map((t) => {
+    if (Number(id) === t.id) {
+      talker = { id: t.id, name, age, talk };
+      return { id: t.id, name, age, talk };
+    }
+    return t;
+  });
+
+  fs.writeFile('./talker.json', JSON.stringify(newTalkers, null, '\t'));
+  return res.status(200).json(talker);
+});
+
 app.use(errorMiddleware);
 
 app.listen(PORT, () => {
