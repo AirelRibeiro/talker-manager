@@ -3,11 +3,14 @@ const bodyParser = require('body-parser');
 const fs = require('fs/promises');
 const crypto = require('crypto');
 const {
-  validatePersonalInfors,
   validateToken,
-  validadeName,
+  validateEmail,
+  validatePassword,
+  validateName,
   validateAge,
   validateTalk,
+  validateWatchedAt,
+  validateRate,
 } = require('./validationMiddlewares');
 const errorMiddleware = require('./errorMiddleware');
 
@@ -41,10 +44,29 @@ app.get('/talker/:id', async (req, res) => {
   return res.status(200).json(talker);
 });
 
-app.post('/login', validatePersonalInfors, (req, res) => {
+app.post('/login', validateEmail, validatePassword, (req, res) => {
   const token = crypto.randomBytes(8).toString('hex');
   req.token = token;
   res.status(200).json({ token });
+});
+
+app.use(validateToken);
+
+app.use(validateName);
+app.use(validateAge);
+app.use(validateTalk);
+app.use(validateWatchedAt);
+app.use(validateRate);
+
+app.post('/talker', async (req, res) => {
+  const { name, age, talk } = req.body;
+  
+  const data = await fs.readFile('./talker.json');
+  const talkers = await JSON.parse(data);
+  const talker = { id: talkers.length + 1, name, age, talk };
+  talkers.push(talker);
+  fs.writeFile('./talker.json', JSON.stringify(talkers, null, '\t'));
+  return res.status(201).json(talker);
 });
 
 app.use(errorMiddleware);
