@@ -39,7 +39,7 @@ function validateToken(req, res, next) {
       error.message = 'Token não encontrado';
       return next(error);
     }
-    if (authorization !== req.token) return next(error);
+    if (authorization.length !== 16) return next(error);
     next(); 
 }
 
@@ -51,7 +51,7 @@ function validateName(req, res, next) {
     return next(error);
   }
   if (name.length < 3) {
-    error.message = 'O campo "name" deve ter pelo menos 3 caracteres';
+    error.message = 'O "name" deve ter pelo menos 3 caracteres';
     return next(error);
   }
   next();
@@ -64,7 +64,7 @@ function validateAge(req, res, next) {
     error.message = 'O campo "age" é obrigatório';
     return next(error);
   }
-  if (age < 18) {
+  if (Number(age) < 18) {
     error.message = 'A pessoa palestrante deve ser maior de idade';
     return next(error);
   }
@@ -88,7 +88,7 @@ function validateWatchedAt(req, res, next) {
     return next(error);
   }
   if (!isValidDate(watchedAt)) {
-    error.message = 'O campo "watchedAt"  deve ter o formato "dd/mm/aaaa"';
+    error.message = 'O campo "watchedAt" deve ter o formato "dd/mm/aaaa"';
     return next(error);
   }
   next();
@@ -103,7 +103,7 @@ function validateRate(req, res, next) {
     error.message = 'O campo "rate" é obrigatório';
     return next(error);
   }
-  if (rate < 1 || rate > 5) {
+  if (Number(rate) < 1 || Number(rate) > 5) {
     error.message = 'O campo "rate" deve ser um inteiro de 1 à 5';
     return next(error);
   }
