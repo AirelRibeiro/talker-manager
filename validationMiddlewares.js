@@ -98,13 +98,14 @@ function validateRate(req, res, next) {
   const { talk } = req.body;
   const { rate } = talk;
   const error = { status: 400 };
+
+  if (Number(rate) < 1 || Number(rate) > 5) {
+    error.message = 'O campo "rate" deve ser um inteiro de 1 à 5';
+    return next(error);
+  }
   
   if (!rate) {
     error.message = 'O campo "rate" é obrigatório';
-    return next(error);
-  }
-  if (Number(rate) < 1 || Number(rate) > 5) {
-    error.message = 'O campo "rate" deve ser um inteiro de 1 à 5';
     return next(error);
   }
   next();
